@@ -1,0 +1,47 @@
+<!-- RAKABOT AI - Dark Mode Website (ChatGPT-style) -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rakabot AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body{margin:0;font-family:'Segoe UI',sans-serif;background:#121212;color:#fff}
+    header{background:#1f1f1f;padding:1rem;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:1.5rem;font-weight:bold;color:#00ffae}
+    .container{max-width:700px;margin:2rem auto;padding:1rem}
+    .bubble{background:#252525;border-radius:10px;padding:1rem;margin-bottom:1rem}
+    .user{text-align:right;color:#00ffae}
+    .ai{text-align:left;color:#fff}
+    input,button{padding:.75rem;margin-top:.5rem;width:100%;border-radius:8px;border:none;font-size:1rem}
+    input{background:#1f1f1f;color:#fff}
+    button{background:#00ffae;color:#000;cursor:pointer;font-weight:bold}
+    .pro-badge{color:gold;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">⭐ RAKABOT AI</div>
+    <div><span class="pro-badge">User: Gratis</span></div>
+  </header>
+
+  <div class="container">
+    <div id="chat"></div>
+    <input id="question" placeholder="Tanyakan sesuatu..."/>
+    <button onclick="askRakabot()">Kirim Pertanyaan</button>
+  </div>
+
+<script>
+const jawabanManual = await fetch('data-jawaban.json').then(r=>r.json()).catch(()=>({}));
+const kodePRO = "RAKAPRO123"; let isPRO=false;
+async function askRakabot(){const q=document.getElementById("question").value.toLowerCase().trim();if(!q)return;
+const chat=document.getElementById("chat");chat.innerHTML+=`<div class='bubble user'>${q}</div>`;
+if(jawabanManual[q]){chat.innerHTML+=`<div class='bubble ai'>${jawabanManual[q]}</div>`;return;}
+if(!isPRO){chat.innerHTML+=`<div class='bubble ai'>Pertanyaanmu sudah dikirim ke admin. Silakan upgrade ke PRO untuk jawaban langsung.</div>`;
+window.open(`https://wa.me/6285870327192?text=Pertanyaan:%20${encodeURIComponent(q)}`);return;}
+const res=await fetch("/api/chatgpt",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:q})});
+const data=await res.json();chat.innerHTML+=`<div class='bubble ai'>${data.answer}</div>`;}
+setTimeout(()=>{const code=prompt("Masukkan kode PRO jika punya:");if(code===kodePRO){isPRO=true;document.querySelector(".pro-badge").textContent="User: PRO ✅";alert("Berhasil masuk sebagai PRO");}},500);
+</script>
+</body></html>
